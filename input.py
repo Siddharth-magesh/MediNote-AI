@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request , session
 import os
 import pyaudio
 import wave
@@ -8,24 +8,49 @@ from pydub import AudioSegment, silence
 import threading
 import json
 from googletrans import Translator 
+from datetime import datetime
+from flask_session import Session
 
 app = Flask(__name__)
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"P:/hackathons/hack-verse/serviceacc_key.json"  
+app.config['SESSION_TYPE'] = 'filesystem' 
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_sessions') 
+app.secret_key = '1234'
+Session(app)
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/MediNote-AI/static/APIKEY/able-nature-432213-b7-25137500525e.json"
 
 stream = None
 frames = []
 output_filename = None
 
 translator = Translator()
-
-def start_recording_thread(sample_rate=44100, channels=1, chunk_size=1024):
-    global stream, frames, output_filename
-
-    unique_id = "PAT" + str(uuid.uuid4().int)[:3]
     
-    base_folder = "static/patient_details"
-    patient_folder = os.path.join(base_folder, unique_id)
+def merge_transcripts_and_overwrite(file_path):
+    try:
+        with open(file_path, 'r') as file:
+            json_data = json.load(file)
+
+        transcripts = json_data.get("transcripts", [])
+        merged_transcript = " ".join(item["transcript"] for item in transcripts if "transcript" in item).strip()
+        
+        with open(file_path, 'w') as file:
+            json.dump({"transcripts": [{"language": "en", "transcript": merged_transcript}]}, file, indent=4)
+
+        print(f"Transcripts merged and overwritten successfully in {file_path}.")
+    
+    except FileNotFoundError:
+        print(f"Error: The file at {file_path} was not found.")
+    except json.JSONDecodeError:
+        print(f"Error: The file at {file_path} could not be decoded as JSON.")
+    except Exception as e:
+        print(f"Error merging transcripts: {e}")
+
+def start_recording_thread(patient_id, sample_rate=44100, channels=1, chunk_size=1024):
+    global stream, frames, output_filename
+    date = datetime.now().strftime("%Y-%m-%d")
+    
+    patient_folder = f"static/patient_details/{patient_id}/{date}"
+    os.makedirs(patient_folder, exist_ok=True)
     
     os.makedirs(patient_folder, exist_ok=True)
 
@@ -105,9 +130,9 @@ def process_audio_with_language(file_path, language_code):
         if transcript:
             if language_code != 'en':
                 translated_text = translator.translate(transcript, src=language_code, dest='en').text
-                transcripts.append({"language": language_code, "transcript": transcript, "translated": translated_text})
+                transcripts.append({"language": language_code, "original": transcript, "transcript": translated_text})
             else:
-                transcripts.append({"language": language_code, "transcript": transcript})
+                transcripts.append({"language": language_code,"transcript": transcript})
     return transcripts
 
 def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
@@ -119,6 +144,9 @@ def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
         with open(file_path, 'w') as json_file:
             json.dump({"transcripts": transcripts}, json_file, indent=4)
 
+        merge_transcripts_and_overwrite(file_path)
+        session['transcript_path'] = file_path
+
         print(f"Transcripts saved to {file_path}")
         return file_path
     except Exception as e:
@@ -127,9 +155,16 @@ def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
 
 @app.route('/start-recording', methods=['POST'])
 def start_recording():
-    thread = threading.Thread(target=start_recording_thread)
+    patient_id = session.get('patient_id')
+    print(patient_id)
+    
+    if not patient_id:
+        return jsonify({"error": "Patient ID not found in session"}), 400
+    thread = threading.Thread(target=start_recording_thread, args=(patient_id,))
     thread.start()
+    
     return jsonify({"message": "Recording started"}), 200
+
 
 @app.route('/stop-recording', methods=['POST'])
 def stop_recording_endpoint():
@@ -148,4 +183,4 @@ def stop_recording_endpoint():
         return jsonify({"message": "Failed to stop recording"}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5001)

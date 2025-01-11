@@ -1,6 +1,5 @@
 flask
 uuid
-groq
 python-dotenv
 pyaudio
 wave

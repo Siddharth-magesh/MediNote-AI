@@ -1,4 +1,4 @@
-from flask import Flask, render_template , request , jsonify
+from flask import Flask, render_template , request , jsonify , session
 import os
 import re
 import uuid
@@ -6,9 +6,18 @@ import json
 from groq import Groq
 from config import Config
 from datetime import datetime
+from flask_session import Session
 
 app = Flask(__name__)
+app.config['SESSION_TYPE'] = 'filesystem' 
+app.config['SESSION_PERMANENT'] = False
+app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_sessions') 
+app.secret_key = '1234'
+Session(app)
 client = Groq(api_key=Config.GROQ_API_KEY)
+
+if not os.path.exists(app.config['SESSION_FILE_DIR']):
+    os.makedirs(app.config['SESSION_FILE_DIR'])
 
 def save_patient_details_to_file(patient_details, file_name , unique_id):
     date = datetime.now().strftime("%Y-%m-%d")
@@ -23,6 +32,13 @@ def save_patient_details_to_file(patient_details, file_name , unique_id):
 def home():
     return render_template('index.html')
 
+@app.route('/fetch_past_patient_details',methods=['POST'])
+def fetch_past_patient_details():
+    try:
+        data = request.json
+        id = data['id']
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -305,18 +321,33 @@ def extract_care_management(conversation):
         return "error : The model response could not be parsed as valid JSON."
 
     return file_path
+    
+@app.route('/set_patient_details',methods=['POST'])
+def set_patient_details():
+    try:
+        session['patient_id'] = 'PAT574'
+        return jsonify({"message": "Patient ID set successfully!", "patient_id": session['patient_id']})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/generate_report', methods=['POST'])
 def generate_request():
-    data = request.json
-    conversation = data.get("conversation", "")
+    file_path = session.get('transcript_path')
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            transcripts = data.get("transcripts", [])
+            if not transcripts:
+                return jsonify({"error": "No transcripts found in the file"}), 400
+            conversation = transcripts[0].get("transcript")
+            patient_details_file_path = extract_patient_details(conversation)
+            diet_plan_file_path = extract_diet_plan(conversation)
+            prescription_file_path = extract_prescription_details(conversation)
+            care_management_file_path = extract_care_management(conversation)
+            process_patient_data(patient_details_file_path)
 
-    patient_details_file_path = extract_patient_details(conversation)
-    diet_plan_file_path = extract_diet_plan(conversation)
-    prescription_file_path = extract_prescription_details(conversation)
-    care_management_file_path = extract_care_management(conversation)
-    process_patient_data(patient_details_file_path)
-
+    except (json.JSONDecodeError, FileNotFoundError) as e:
+        return f"Error reading the file: {e}"
 
     return jsonify({
         "message": "Report generated successfully.",
@@ -327,4 +358,4 @@ def generate_request():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,port=5000)
