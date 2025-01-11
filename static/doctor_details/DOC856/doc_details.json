@@ -1,0 +1,11 @@
+{
+    "name": "Dr. John Doe",
+    "address": "456 Elm Street",
+    "hospital_name": "Green Valley Hospital",
+    "contact_number": "9876543210",
+    "sign": "JohnDoeSignature",
+    "education_qualification": "MBBS, MD",
+    "email": "johndoe@example.com",
+    "password": "password123",
+    "unique_id": "DOC856"
+}
