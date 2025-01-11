@@ -1,0 +1,26 @@
+{
+    "Breakfast": [
+        {
+            "Food item": "Oatmeal with fruits, almonds, and orange juice",
+            "Portion size": null,
+            "Instructions": null,
+            "Frequency": "once a day"
+        }
+    ],
+    "Lunch": [
+        {
+            "Food item": "Grilled chicken, quinoa, and leafy greens",
+            "Portion size": null,
+            "Instructions": null,
+            "Frequency": "once a day"
+        }
+    ],
+    "Dinner": [
+        {
+            "Food item": "Grilled salmon, roasted sweet potatoes, and steamed broccoli",
+            "Portion size": null,
+            "Instructions": "avoid heavy carbs",
+            "Frequency": "once a day"
+        }
+    ]
+}
