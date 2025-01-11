@@ -157,6 +157,50 @@
             color: #bfdbfe;
         }
 
+        /* Language selector styles */
+        .language-select {
+            position: relative;
+            width: 120px;
+            margin-bottom: 0.75rem;
+        }
+
+        .language-select select {
+            width: 100%;
+            padding: 0.75rem 2.5rem 0.75rem 1rem;
+            background: rgba(30, 58, 138, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .language-select select:hover {
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+
+        .language-select select:focus {
+            outline: none;
+            border-color: transparent;
+            box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
+        }
+
+        .language-select::after {
+            content: '';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(191, 219, 254, 0.7);
+            pointer-events: none;
+        }
+
         /* Enhanced error message styling */
         .error-container {
             background: rgba(239, 68, 68, 0.1);
@@ -223,6 +267,16 @@
             width: 100%;
         }
 
+        /* Controls wrapper for mic and pause buttons */
+        .controls-wrapper {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 50px;
+            align-items: center;
+            margin-bottom: 4rem;
+            justify-content: center;
+        }
+
         .controls {
             display: flex;
             flex-direction: column;
@@ -248,12 +302,31 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
-        .mic-button:hover:not(:disabled) {
+        .pause-button {
+            position: relative;
+            padding: 1.5rem;
+            width: 5rem;
+            height: 5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom right, #60a5fa, #2563eb);
+            border: none;
+            border-radius: 9999px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .mic-button:hover:not(:disabled),
+        .pause-button:hover:not(:disabled) {
             transform: scale(1.05);
             box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0.15);
         }
 
-        .mic-button:disabled {
+        .mic-button:disabled,
+        .pause-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
@@ -263,6 +336,11 @@
         .mic-button i {
             width: 4rem;
             height: 4rem;
+        }
+
+        .pause-button i {
+            width: 2rem;
+            height: 2rem;
         }
 
         .mic-button.recording .ping-animation {
@@ -387,6 +465,14 @@
                             <i data-lucide="send"></i>
                         </button>
                     </div>
+
+                    <div class="language-select">
+                        <select id="languageSelect" aria-label="Select language">
+                            <option value="en">English</option>
+                            <option value="ta">தமிழ்</option>
+                            <option value="hi">हिंदी</option>
+                        </select>
+                    </div>
                     
                     <div id="patientInfo" class="patient-info"></div>
                 </div>
@@ -397,16 +483,25 @@
         <main>
             <div class="container">
                 <div class="controls">
-                    <button id="micButton" class="mic-button" disabled>
-                        <i data-lucide="mic"></i>
-                        <div class="ping-animation"></div>
-                    </button>
-
-                    <button id="reportButton" class="report-button" disabled>
-                        <i data-lucide="file-text"></i>
-                        <span>Generate Report</span>
-                    </button>
-                </div>
+                    <form action="/mic-action" method="POST">
+                        <div class="controls-wrapper">
+                            <button id="micButton" class="mic-button" disabled>
+                                <i data-lucide="mic"></i>
+                                <div class="ping-animation"></div>
+                            </button>
+                            <button id="pauseButton" class="pause-button" disabled>
+                                <i data-lucide="pause"></i>
+                            </button>
+                        </div>
+                    </form>
+        
+                    <form action="/report-action" method="POST">
+                        <button id="reportButton" class="report-button" disabled>
+                            <i data-lucide="file-text"></i>
+                            <span>Generate Report</span>
+                        </button>
+                    </form>
+                </div>  
             </div>
         </main>
 
@@ -427,20 +522,45 @@
             const lookupBtn = document.getElementById('lookupBtn');
             const patientInfo = document.getElementById('patientInfo');
             const micButton = document.getElementById('micButton');
+            const pauseButton = document.getElementById('pauseButton');
             const reportButton = document.getElementById('reportButton');
+            const languageSelect = document.getElementById('languageSelect');
 
             let isRecording = false;
+            let isPaused = false;
             let isLoading = false;
 
             // Event Listeners
             lookupBtn.addEventListener('click', lookupPatient);
             micButton.addEventListener('click', toggleRecording);
+            pauseButton.addEventListener('click', togglePause);
             phoneInput.addEventListener('input', handleInput);
+            languageSelect.addEventListener('change', handleLanguageChange);
             
             function handleInput(e) {
                 // Only allow numbers
                 e.target.value = e.target.value.replace(/[^0-9]/g, '');
                 clearError();
+            }
+
+            function handleLanguageChange(e) {
+                const selectedLanguage = e.target.value;
+                // Here you can implement language change logic
+                console.log('Language changed to:', selectedLanguage);
+            }
+
+            function togglePause() {
+                if (!isRecording) return;
+                
+                isPaused = !isPaused;
+                if (isPaused) {
+                    pauseButton.innerHTML = '<i data-lucide="play"></i>';
+                    micButton.classList.remove('recording');
+                } else {
+                    pauseButton.innerHTML = '<i data-lucide="pause"></i>';
+                    micButton.classList.add('recording');
+                }
+                lucide.createIcons();
             }
 
             function clearError() {
@@ -537,15 +657,26 @@
             function toggleRecording() {
                 isRecording = !isRecording;
                 micButton.classList.toggle('recording', isRecording);
+                
+                if (isRecording) {
+                    pauseButton.disabled = false;
+                    pauseButton.innerHTML = '<i data-lucide="pause"></i>';
+                } else {
+                    pauseButton.disabled = true;
+                    isPaused = false;
+                }
+                lucide.createIcons();
             }
 
             function enableControls() {
                 micButton.disabled = false;
+                pauseButton.disabled = true; // Initially disabled until recording starts
                 reportButton.disabled = false;
             }
 
             function disableControls() {
                 micButton.disabled = true;
+                pauseButton.disabled = true;
                 reportButton.disabled = true;
             }
 
