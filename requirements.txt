@@ -1,2 +1,4 @@
 flask
 uuid
+groq
+python-dotenv
