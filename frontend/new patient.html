@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediNote-Ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .min-h-screen {
+            min-height: 100vh;
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bg-gradient {
+            background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+            width: 100%;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 40rem;
+            margin: 0 auto;
+        }
+        
+        .auth-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+        
+        h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #bfdbfe;
+            font-size: 1rem;
+        }
+        
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .label-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #bfdbfe;
+            margin-bottom: 0.5rem;
+        }
+        
+        .label-with-icon i {
+            width: 1rem;
+            height: 1rem;
+            color: #bfdbfe;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 58, 138, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1rem;
+        }
+        
+        select option {
+            background: #1e3a8a;
+            color: white;
+        }
+        
+        input::placeholder {
+            color: rgba(191, 219, 254, 0.5);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 1.5rem;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .readonly {
+            background: rgba(30, 58, 138, 0.3);
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 640px) {
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen bg-gradient">
+        <div class="container">
+            <div class="auth-card">
+                <div class="text-center mb-8">
+                    <h1>Patient Registration</h1>
+                    <p class="subtitle">Enter patient details to create a new record</p>
+                </div>
+
+                <form id="patientForm" class="space-y-6">
+                    <div class="grid-cols-2">
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="user"></i>
+                                Name
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    placeholder="Enter patient name"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="calendar"></i>
+                                Age
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="number"
+                                    id="age"
+                                    name="age"
+                                    placeholder="Enter age"
+                                    min="0"
+                                    max="150"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="users"></i>
+                                Gender
+                            </label>
+                            <div class="input-container">
+                                <select id="gender" name="gender" required>
+                                    <option value="">Select gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="droplet"></i>
+                                Blood Group
+                            </label>
+                            <div class="input-container">
+                                <select id="bloodGroup" name="bloodGroup" required>
+                                    <option value="">Select blood group</option>
+                                    <option value="A+">A+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B+">B+</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O+">O+</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="scale"></i>
+                                Weight (kg)
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="number"
+                                    id="weight"
+                                    name="weight"
+                                    placeholder="Enter weight"
+                                    step="0.1"
+                                    min="0"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="ruler"></i>
+                                Height (cm)
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="number"
+                                    id="height"
+                                    name="height"
+                                    placeholder="Enter height"
+                                    step="0.1"
+                                    min="0"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="phone"></i>
+                                Contact Number
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="tel"
+                                    id="contact"
+                                    name="contact"
+                                    placeholder="Enter contact number"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label-with-icon">
+                                <i data-lucide="activity"></i>
+                                BMI
+                            </label>
+                            <div class="input-container">
+                                <input
+                                    type="number"
+                                    id="bmi"
+                                    name="bmi"
+                                    placeholder="Calculated BMI"
+                                    readonly
+                                    class="readonly"
+                                >
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary">
+                        Register Patient
+                        <i data-lucide="check"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+
+            const form = document.getElementById('patientForm');
+            const weightInput = document.getElementById('weight');
+            const heightInput = document.getElementById('height');
+            const bmiInput = document.getElementById('bmi');
+
+            // Function to calculate BMI
+            function calculateBMI() {
+                const weight = parseFloat(weightInput.value);
+                const height = parseFloat(heightInput.value) / 100; // Convert cm to meters
+                
+                if (weight && height) {
+                    const bmi = (weight / (height * height)).toFixed(1);
+                    bmiInput.value = bmi;
+                }
+            }
+
+            // Add event listeners for weight and height inputs
+            weightInput.addEventListener('input', calculateBMI);
+            heightInput.addEventListener('input', calculateBMI);
+
+            // Form submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Create an object with the form data
+                const formData = new FormData(form);
+                const patientData = Object.fromEntries(formData.entries());
+                
+                // Here you would typically send the data to your backend
+                console.log('Patient Data:', patientData);
+                
+                // For demonstration purposes, show a success message
+                alert('Patient registered successfully!');
+                form.reset();
+                bmiInput.value = ''; // Clear BMI field
+            });
+        });
+    </script>
+</body>
+</html>

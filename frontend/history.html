@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient History - MedNote-Ai</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            min-height: 100vh;
+        }
+
+        .app {
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+            color: white;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header styles */
+        header {
+            padding: 2rem;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .logo-icon {
+            padding: 0.75rem;
+            background: rgba(30, 64, 175, 0.5);
+            border-radius: 0.5rem;
+        }
+
+        .brand h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+        }
+
+        .doctor-name {
+            color: #bfdbfe;
+            font-size: 1.125rem;
+        }
+
+        /* Main content styles */
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Patient Profile Card */
+        .profile-card {
+            background: rgba(30, 58, 138, 0.3);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .patient-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .patient-id {
+            color: #bfdbfe;
+            font-size: 0.875rem;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .profile-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .profile-label {
+            color: #bfdbfe;
+            font-size: 0.875rem;
+        }
+
+        .profile-value {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Prescription History */
+        .history-section {
+            margin-top: 2rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .prescription-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .prescription-card {
+            background: rgba(30, 58, 138, 0.3);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .prescription-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(96, 165, 250, 0.2);
+        }
+
+        .prescription-date {
+            color: #bfdbfe;
+            font-size: 0.875rem;
+        }
+
+        .prescription-content {
+            white-space: pre-wrap;
+            font-family: inherit;
+            line-height: 1.5;
+        }
+
+        /* Back button */
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .back-button:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        /* Footer styles */
+        footer {
+            padding: 1.5rem;
+            text-align: center;
+            color: rgba(191, 219, 254, 0.7);
+            border-top: 1px solid rgba(96, 165, 250, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header>
+            <div class="header-content">
+                <div class="logo-container">
+                    <div class="logo-icon">
+                        <i data-lucide="stethoscope"></i>
+                    </div>
+                    <div class="brand">
+                        <h1>MediNote-Ai</h1>
+                        <p class="doctor-name">Dr. John Smith</p>
+                    </div>
+                </div>
+                <a href="/" class="back-button">
+                    <i data-lucide="arrow-left"></i>
+                    Back to Search
+                </a>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Patient Profile Card -->
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div>
+                        <h2 class="patient-name">Jane Doe</h2>
+                        <p class="patient-id">Patient ID: #12345</p>
+                    </div>
+                </div>
+                <div class="profile-grid">
+                    <div class="profile-item">
+                        <span class="profile-label">Age</span>
+                        <span class="profile-value">32 years</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Gender</span>
+                        <span class="profile-value">Female</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Weight</span>
+                        <span class="profile-value">65 kg</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Height</span>
+                        <span class="profile-value">165 cm</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">BMI</span>
+                        <span class="profile-value">23.9</span>
+                    </div>
+                    <div class="profile-item">
+                        <span class="profile-label">Blood Group</span>
+                        <span class="profile-value">O+</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescription History -->
+            <div class="history-section">
+                <div class="history-header">
+                    <h2>Prescription History</h2>
+                </div>
+                <div class="prescription-container">
+                    <!-- Example of a prescription card -->
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <span class="prescription-date">January 12, 2024</span>
+                        </div>
+                        <div class="prescription-content">
+                            1. Tab. Paracetamol 500mg - 1-1-1 for 3 days
+                            2. Syp. Ambroxol 30mg - 1-1-1 for 5 days
+                            
+                            Advice:
+                            - Take medicine after food
+                            - Drink plenty of water
+                            - Rest for 2-3 days
+                        </div>
+                    </div>
+
+                    <!-- Another prescription card -->
+                    <div class="prescription-card">
+                        <div class="prescription-header">
+                            <span class="prescription-date">December 28, 2023</span>
+                        </div>
+                        <div class="prescription-content">
+                            1. Tab. Amoxicillin 500mg - 1-0-1 for 5 days
+                            2. Tab. Cetirizine 10mg - 0-0-1 for 3 days
+                            
+                            Advice:
+                            - Complete the course of antibiotics
+                            - Avoid cold foods and beverages
+                            - Follow up after 5 days if symptoms persist
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2024 MedNote-Ai. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Lucide icons
+            lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{
+    "Tablet": [
+        {
+            "Name": "Paracetamol",
+            "When": "after",
+            "Timing": "breakfast",
+            "Frequency": "once a day"
+        },
+        {
+            "Name": "Glucosamine",
+            "When": "after",
+            "Timing": "lunch",
+            "Frequency": "once a day"
+        },
+        {
+            "Name": "Melatonin",
+            "When": "before",
+            "Timing": "bedtime",
+            "Frequency": "once a day"
+        },
+        {
+            "Name": "Cetirizine",
+            "When": "before",
+            "Timing": "bedtime",
+            "Frequency": "once a day"
+        },
+        {
+            "Name": "Vitamin D3",
+            "When": "None",
+            "Timing": "morning",
+            "Frequency": "once a day"
+        },
+        {
+            "Name": "Losartan",
+            "When": "before",
+            "Timing": "breakfast",
+            "Frequency": "once a day"
+        }
+    ],
+    "Injection": [
+        {
+            "Name": "B12",
+            "Dosage": "None",
+            "Frequency": "once a month"
+        }
+    ],
+    "Revisiting": "6 weeks"
+}

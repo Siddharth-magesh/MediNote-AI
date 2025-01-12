@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request , session
+from flask import Flask, jsonify, request , render_template
 import os
 import pyaudio
 import wave
@@ -9,22 +9,17 @@ import threading
 import json
 from googletrans import Translator 
 from datetime import datetime
-from flask_session import Session
 
 app = Flask(__name__)
-app.config['SESSION_TYPE'] = 'filesystem' 
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_sessions') 
-app.secret_key = '1234'
-Session(app)
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r"/MediNote-AI/static/APIKEY/able-nature-432213-b7-25137500525e.json"
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = r'D:\MediNote-AI\static\APIKEY\able-nature-432213-b7-25137500525e.json' 
 
 stream = None
 frames = []
 output_filename = None
 
 translator = Translator()
-    
+
 def merge_transcripts_and_overwrite(file_path):
     try:
         with open(file_path, 'r') as file:
@@ -45,13 +40,12 @@ def merge_transcripts_and_overwrite(file_path):
     except Exception as e:
         print(f"Error merging transcripts: {e}")
 
-def start_recording_thread(patient_id, sample_rate=44100, channels=1, chunk_size=1024):
+def start_recording_thread(sample_rate=44100, channels=1, chunk_size=1024):
     global stream, frames, output_filename
     date = datetime.now().strftime("%Y-%m-%d")
-    
+    patient_id = 'PAT574'
+
     patient_folder = f"static/patient_details/{patient_id}/{date}"
-    os.makedirs(patient_folder, exist_ok=True)
-    
     os.makedirs(patient_folder, exist_ok=True)
 
     output_filename = os.path.join(patient_folder, "recording.wav")
@@ -132,7 +126,7 @@ def process_audio_with_language(file_path, language_code):
                 translated_text = translator.translate(transcript, src=language_code, dest='en').text
                 transcripts.append({"language": language_code, "original": transcript, "transcript": translated_text})
             else:
-                transcripts.append({"language": language_code,"transcript": transcript})
+                transcripts.append({"language": language_code, "transcript": transcript})
     return transcripts
 
 def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
@@ -145,7 +139,6 @@ def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
             json.dump({"transcripts": transcripts}, json_file, indent=4)
 
         merge_transcripts_and_overwrite(file_path)
-        session['transcript_path'] = file_path
 
         print(f"Transcripts saved to {file_path}")
         return file_path
@@ -155,28 +148,22 @@ def save_transcripts_to_json(transcripts, folder, file_name="transcript.json"):
 
 @app.route('/start-recording', methods=['POST'])
 def start_recording():
-    patient_id = session.get('patient_id')
-    print(patient_id)
-    
-    if not patient_id:
-        return jsonify({"error": "Patient ID not found in session"}), 400
-    thread = threading.Thread(target=start_recording_thread, args=(patient_id,))
+    thread = threading.Thread(target=start_recording_thread)
     thread.start()
-    
-    return jsonify({"message": "Recording started"}), 200
-
+    return render_template('Analyse.html')
 
 @app.route('/stop-recording', methods=['POST'])
 def stop_recording_endpoint():
     file_path = stop_recording()
     language_code = request.form.get("language_select")
+    print(language_code)
     if file_path:
         folder = os.path.dirname(file_path)
 
         transcripts = process_audio_with_language(file_path,language_code)
         if transcripts:
             save_transcripts_to_json(transcripts, folder)
-            return jsonify({"message": "Transcription successful", "transcripts": transcripts}), 200
+            return render_template('Analyse.html')
         else:
             return jsonify({"message": "Failed to transcribe audio"}), 500
     else:

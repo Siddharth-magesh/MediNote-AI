@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Previous head content remains the same -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediNote-Ai</title>
+    <style>
+      /* Previous styles remain the same */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        color: white;
+        min-height: 100vh;
+        background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Left Side Styles */
+      .prescription-preview {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 1rem;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        height: calc(100vh - 4rem);
+      }
+
+      .image-container {
+        width: 100%;
+        aspect-ratio: 1414/2000;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        max-height: calc(100vh - 12rem);
+      }
+
+      .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+      }
+
+      .button-group {
+        display: flex;
+        gap: 1rem;
+      }
+
+      /* Right Side Styles */
+      .forms-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        max-height: calc(100vh - 4rem);
+        overflow-y: auto;
+      }
+
+      .form-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 1rem;
+        padding: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: white;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #bfdbfe;
+        margin-bottom: 0.5rem;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 100px;
+        padding: 0.75rem 1rem;
+        background: rgba(30, 58, 138, 0.5);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 0.5rem;
+        color: white;
+        font-size: 1rem;
+        resize: vertical;
+      }
+
+      /* New styles for care management textarea */
+      .care-management textarea {
+        min-height: 300px; /* Increased minimum height */
+        font-size: 1.1rem; /* Slightly larger font size */
+        line-height: 1.6; /* Better line spacing */
+        padding: 1rem 1.25rem; /* More padding for better text visibility */
+      }
+
+      .care-management {
+        color: #e2e8f0;
+        line-height: 1.6;
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          grid-template-columns: 1fr;
+          padding: 1rem;
+        }
+
+        .prescription-preview {
+          height: auto;
+          min-height: 60vh;
+        }
+
+        .image-container {
+          width: 100%;
+          max-height: 70vh;
+        }
+      }
+
+      @media print {
+        .container {
+          display: block;
+        }
+
+        .image-container {
+          width: 1414px;
+          height: 2000px;
+          page-break-inside: avoid;
+        }
+
+        .forms-container {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <!-- Rest of the HTML content remains the same -->
+  <body>
+    <div class="container">
+      <!-- Left Side - Prescription Preview -->
+      <div class="prescription-preview">
+        <div class="image-container">
+          <img
+            src="{{ url_for('static',filename='updated_diet_plan.png') }}"
+            alt="Prescription Preview"
+          />
+        </div>
+        <div class="button-group">
+          <a href="{{ url_for('print_prescription') }}">
+            <button class="btn btn-primary" onclick="printPrescription()">
+              <i data-lucide="printer"></i>
+              Print Prescription
+            </button></a
+          >
+          <a href="{{ url_for('render_previous_page') }}">
+            <button class="btn btn-secondary" onclick="goBack()">
+              <i data-lucide="arrow-left"></i>
+              Back
+            </button></a
+          >
+        </div>
+      </div>
+
+      <!-- Right Side - Forms -->
+      <div class="forms-container">
+        <!-- Diet Plan Form -->
+        <div class="form-card">
+          <h2 class="form-title">Diet Plan</h2>
+          <form id="dietForm">
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="sunrise"></i>
+                Breakfast (7:00 AM - 9:00 AM)
+              </label>
+              <textarea
+                placeholder="Enter breakfast diet plan&#10;Example: 2 whole grain bread slices&#10;1 cup oatmeal&#10;1 fresh fruit"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="sun"></i>
+                Lunch (12:00 PM - 2:00 PM)
+              </label>
+              <textarea
+                placeholder="Enter lunch diet plan&#10;Example: 1 cup brown rice&#10;1 cup vegetables&#10;1 serving lean protein"
+              ></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="moon"></i>
+                Dinner (7:00 PM - 9:00 PM)
+              </label>
+              <textarea
+                placeholder="Enter dinner diet plan&#10;Example: 1 cup quinoa&#10;1 serving fish/chicken&#10;1 cup mixed vegetables"
+              ></textarea>
+            </div>
+          </form>
+        </div>
+
+        <!-- Care Management -->
+        <div class="form-card">
+          <h2 class="form-title">Care Management</h2>
+          <div class="care-management">
+            <textarea
+              placeholder="Enter care management instructions and recommendations for the patient...&#10;&#10;Example:&#10;1. Regular monitoring of vital signs&#10;2. Physical activity recommendations&#10;3. Lifestyle modifications&#10;4. Follow-up schedule&#10;5. Emergency contact information"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize Lucide icons
+        lucide.createIcons();
+      });
+
+      // Print function
+      function printPrescription() {
+        window.print();
+      }
+
+      // Back function
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>
