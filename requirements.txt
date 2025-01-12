@@ -3,3 +3,4 @@ uuid
 groq
 python-dotenv
 flask_session
+opencv-python
