@@ -14,14 +14,14 @@
         },
         {
             "Name": "Melatonin",
-            "When": "before",
-            "Timing": "bedtime",
+            "When": "None",
+            "Timing": "night",
             "Frequency": "once a day"
         },
         {
             "Name": "Cetirizine",
-            "When": "before",
-            "Timing": "bedtime",
+            "When": "None",
+            "Timing": "night",
             "Frequency": "once a day"
         },
         {
