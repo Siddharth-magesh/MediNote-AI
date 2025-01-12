@@ -1,4 +1,4 @@
-from flask import Flask, render_template , request , jsonify , session
+from flask import Flask, render_template , request , jsonify , send_file
 import os
 import re
 import uuid
@@ -6,18 +6,12 @@ import json
 from groq import Groq
 from config import Config
 from datetime import datetime
-from flask_session import Session
+import cv2
+import textwrap
+from PIL import Image
 
 app = Flask(__name__)
-app.config['SESSION_TYPE'] = 'filesystem' 
-app.config['SESSION_PERMANENT'] = False
-app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_sessions') 
-app.secret_key = '1234'
-Session(app)
 client = Groq(api_key=Config.GROQ_API_KEY)
-
-if not os.path.exists(app.config['SESSION_FILE_DIR']):
-    os.makedirs(app.config['SESSION_FILE_DIR'])
 
 def save_patient_details_to_file(patient_details, file_name , unique_id):
     date = datetime.now().strftime("%Y-%m-%d")
@@ -30,15 +24,7 @@ def save_patient_details_to_file(patient_details, file_name , unique_id):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
-
-@app.route('/fetch_past_patient_details',methods=['POST'])
-def fetch_past_patient_details():
-    try:
-        data = request.json
-        id = data['id']
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return render_template('Analyse.html')
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -102,8 +88,6 @@ def login():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-import json
-
 def process_patient_data(file_path):
     try:
         with open(file_path, "r") as f:
@@ -321,18 +305,126 @@ def extract_care_management(conversation):
         return "error : The model response could not be parsed as valid JSON."
 
     return file_path
-    
-@app.route('/set_patient_details',methods=['POST'])
-def set_patient_details():
-    try:
-        session['patient_id'] = 'PAT574'
-        return jsonify({"message": "Patient ID set successfully!", "patient_id": session['patient_id']})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+
+BASE_PATH = r"D:/MediNote-AI/static/"
+
+def generate_images(patient_details_file_path,care_management_file_path, diet_plan_file_path,prescription_file_path):
+
+    template_path = os.path.join(BASE_PATH, "1.png")
+    image = cv2.imread(template_path)
+
+    template_path2 = os.path.join(BASE_PATH, "2.png")
+    image2 = cv2.imread(template_path2)
+
+    doctor_file_path = os.path.join(BASE_PATH, "doctor_details/DOC856/doc_details.json")
+    with open(patient_details_file_path, "r") as patient_file:
+        patient_data = json.load(patient_file)
+
+    with open(doctor_file_path, "r") as doctor_file:
+        doctor_data = json.load(doctor_file)
+
+    with open(prescription_file_path, "r") as prescription_file:
+        prescription_data = json.load(prescription_file)
+
+    with open(care_management_file_path, "r") as care_file:
+        care_data = json.load(care_file)
+
+    with open(diet_plan_file_path, "r") as diet_file:
+        diet_data = json.load(diet_file)
+
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_scale = 1
+    color = (0, 0, 0)
+    thickness = 2
+
+    positions = {
+        "patient": {
+            "Name": (304, 437),
+            "Age": (300, 497),
+            "Gender": (304, 559),
+            "Contact number": (310, 611),
+            "Weight": (306, 675),
+            "Height": (308, 735),
+            "Blood group": (308, 790),
+            "BMI": (308, 854),
+        },
+        "doctor": {
+            "name": (964, 437),
+            "address": (964, 498),
+            "contact_number": (974, 557),
+        },
+    }
+
+    table_positions = [
+        {"Name": (52, 1285), "Timing": (404, 1285), "When": (738, 1285), "Frequency": (1055, 1285)},
+        {"Name": (52, 1402), "Timing": (404, 1402), "When": (738, 1402), "Frequency": (1055, 1402)},
+        {"Name": (52, 1522), "Timing": (404, 1522), "When": (738, 1522), "Frequency": (1055, 1522)},
+        {"Name": (52, 1633), "Timing": (404, 1633), "When": (738, 1633), "Frequency": (1055, 1633)},
+    ]
+
+    meal_positions = {
+        "Breakfast": (225, 530),
+        "Lunch": (225, 765),
+        "Dinner": (225, 955)
+    }
+
+    meal_box_width = 900
+    care_box_width = image2.shape[1] - 2 * 40 - 100
+    care_position = (40, 1302)
+
+    def draw_text_box(image, position, lines, box_width, line_spacing=30, margin=10):
+        x, y = position
+        box_height = len(lines) * line_spacing + 2 * margin
+        cv2.rectangle(image, (x, y), (x + box_width, y + box_height), (255, 255, 255), -1)
+        cv2.rectangle(image, (x, y), (x + box_width, y + box_height), (255, 255, 255), 2)
+
+        for i, line in enumerate(lines):
+            text_position = (x + margin, y + margin + i * line_spacing)
+            cv2.putText(image, line, text_position, font, font_scale, color, thickness, cv2.LINE_AA)
+
+    care_recommendations = care_data.get("care_management_recommendations", "N/A")
+    wrapped_care_recommendations = textwrap.wrap(care_recommendations, width=95)
+    draw_text_box(image2, care_position, wrapped_care_recommendations, care_box_width)
+
+    for meal, position in meal_positions.items():
+        meal_data = diet_data.get(meal, [{}])[0]
+        lines = [
+            f"{meal_data.get('Food item', 'N/A')}",
+            f"{meal_data.get('Portion size', 'N/A')}",
+            f"{meal_data.get('Instructions', 'N/A')}",
+            f"{meal_data.get('Frequency', 'N/A')}"
+        ]
+        draw_text_box(image2, position, lines, meal_box_width)
+
+    output_path2 = os.path.join(BASE_PATH, "updated_diet_plan.png")
+    cv2.imwrite(output_path2, image2)
+
+    for key, position in positions["patient"].items():
+        text = f"{patient_data[key]}"
+        cv2.putText(image, text, position, font, font_scale, color, thickness, cv2.LINE_AA)
+
+    for key, position in positions["doctor"].items():
+        text = f"{doctor_data[key]}"
+        cv2.putText(image, text, position, font, font_scale, color, thickness, cv2.LINE_AA)
+
+    for i, tablet in enumerate(prescription_data["Tablet"][:4]):
+        for key, position in table_positions[i].items():
+            text = tablet.get(key, "N/A")
+            cv2.putText(image, text, position, font, 0.8, color, 1, cv2.LINE_AA)
+
+    revisit_position = (243, 1845)
+    revisit_text = f"{prescription_data.get('Revisiting', 'N/A')}"
+    cv2.putText(image, revisit_text, revisit_position, font, font_scale, color, thickness, cv2.LINE_AA)
+
+    output_path = os.path.join(BASE_PATH, "updated_prescription.png")
+    cv2.imwrite(output_path, image)
+
+    return output_path, output_path2
 
 @app.route('/generate_report', methods=['POST'])
-def generate_request():
-    file_path = session.get('transcript_path')
+def generate_images_endpoint():
+    patient_id = "PAT574"
+    file_path = r'D:\MediNote-AI\static\patient_details\PAT574\2025-01-12\transcript.json'
     try:
         with open(file_path, 'r') as file:
             data = json.load(file)
@@ -341,21 +433,51 @@ def generate_request():
                 return jsonify({"error": "No transcripts found in the file"}), 400
             conversation = transcripts[0].get("transcript")
             patient_details_file_path = extract_patient_details(conversation)
+            print("done")
             diet_plan_file_path = extract_diet_plan(conversation)
+            print("done")
             prescription_file_path = extract_prescription_details(conversation)
+            print("done")
             care_management_file_path = extract_care_management(conversation)
+            print("done")
             process_patient_data(patient_details_file_path)
+            img1_path , img2_path = generate_images(patient_details_file_path,care_management_file_path,diet_plan_file_path,prescription_file_path)
 
     except (json.JSONDecodeError, FileNotFoundError) as e:
         return f"Error reading the file: {e}"
 
-    return jsonify({
-        "message": "Report generated successfully.",
-        "patient_details_path": str(patient_details_file_path),
-        "diet_plan_path": str(diet_plan_file_path),
-        "prescription_path": str(prescription_file_path),
-        "care_management_path": str(care_management_file_path)
-    })
+    return render_template('prescription page 1.html')
+
+@app.route('/render_next_page')
+def render_next_page():
+    return render_template('prescription page 2.html')
+
+@app.route('/render_previous_page')
+def render_previous_page():
+    return render_template('prescription page 1.html')
+
+@app.route('/print_prescription')
+def print_prescription():
+    try:
+        image1_path = r'D:\MediNote-AI\static\updated_prescription.png'
+        image2_path = r'D:\MediNote-AI\static\updated_diet_plan.png'
+        
+        pdf_dir = r'D:\MediNote-AI\static'
+        if not os.path.exists(pdf_dir):
+            os.makedirs(pdf_dir)
+
+        pdf_path = os.path.join(pdf_dir, 'combined_prescription.pdf')
+        if not os.path.exists(image1_path) or not os.path.exists(image2_path):
+            return jsonify({"error": "One or more images not found"}), 404
+        image1 = Image.open(image1_path)
+        image2 = Image.open(image2_path)
+        image1.save(pdf_path, "PDF", resolution=100.0)
+        image2.save(pdf_path, "PDF", resolution=100.0, append=True)
+        return send_file(pdf_path, as_attachment=True)
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     app.run(debug=True,port=5000)

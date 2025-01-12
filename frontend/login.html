@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediNote-Ai</title>
+    <style>/* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+        
+        /* Layout */
+        .min-h-screen {
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .bg-gradient {
+            background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+            width: 100%;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 28rem;
+            margin: 0 auto;
+        }
+        
+        /* Auth Card */
+        .auth-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(8px);
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Typography */
+        h1 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #bfdbfe;
+            font-size: 1rem;
+        }
+        
+        /* Forms */
+        .space-y-6 > * + * {
+            margin-top: 1.5rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #bfdbfe;
+        }
+        
+        .input-container {
+            position: relative;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            padding-right: 2.5rem;
+            background: rgba(30, 58, 138, 0.5);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        
+        input::placeholder {
+            color: rgba(191, 219, 254, 0.5);
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+        }
+        
+        .input-container i {
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1.25rem;
+            height: 1.25rem;
+            color: rgba(96, 165, 250, 0.5);
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background: #2563eb;
+            border: none;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary i {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        .btn-link {
+            background: none;
+            border: none;
+            color: #60a5fa;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .btn-link:hover {
+            color: #93c5fd;
+        }
+        
+        /* Links */
+        .link {
+            color: #60a5fa;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .link:hover {
+            color: #93c5fd;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #60a5fa;
+            text-decoration: none;
+            margin-bottom: 2rem;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #93c5fd;
+        }
+        
+        .back-link i {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        /* Checkbox */
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .checkbox-container input[type="checkbox"] {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .checkbox-container label {
+            font-size: 0.875rem;
+            color: #bfdbfe;
+        }
+        
+        /* Flex utilities */
+        .flex-between {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mt-6 {
+            margin-top: 1.5rem;
+        }
+        
+        .mb-8 {
+            margin-bottom: 2rem;
+        }
+        
+        /* Reset success state */
+        .icon-circle {
+            width: 4rem;
+            height: 4rem;
+            background: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .icon-circle i {
+            width: 2rem;
+            height: 2rem;
+            color: white;
+        }
+        
+        .success-message {
+            color: #bfdbfe;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
+        }
+        
+        #resetEmailDisplay {
+            color: white;
+            font-weight: 500;
+        }
+        
+        /* Page transitions */
+        .page {
+            display: none;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        .hidden {
+            display: none;
+        }</style>
+</head>
+<body>
+    <!-- Sign In Page -->
+    <div id="signInPage" class="page active">
+        <div class="min-h-screen bg-gradient">
+            <div class="container">
+                <div class="auth-card">
+                    <div class="text-center mb-8">
+                        <h1>Welcome Back</h1>
+                        <p class="subtitle">Sign in to continue to MediNote-Ai</p>
+                    </div>
+
+                    <form id="signInForm" class="space-y-6">
+                        <div class="form-group">
+                            <label for="signInEmail">Email Address</label>
+                            <div class="input-container">
+                                <input
+                                    id="signInEmail"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signInPassword">Password</label>
+                            <div class="input-container">
+                                <input
+                                    id="signInPassword"
+                                    type="password"
+                                    placeholder="Enter your password"
+                                    required
+                                >
+                            </div>
+                        </div>
+
+                        <div class="flex-between">
+                            <div class="checkbox-container">
+                                <input type="checkbox" id="rememberMe">
+                                <label for="rememberMe">Remember me</label>
+                            </div>
+                            <a href="#" class="link" onclick="showPage('forgotPasswordPage')">
+                                Forgot password?
+                            </a>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            Sign In
+                          
+                        </button>
+                    </form>
+
+                    <p class="text-center mt-6">
+                        Don't have an account?
+                        <a href="#" class="link" onclick="showPage('signUpPage')">Sign up</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Page -->
+    <div id="signUpPage" class="page">
+        <div class="min-h-screen bg-gradient">
+            <div class="container">
+                <div class="auth-card">
+                    <div class="text-center mb-8">
+                        <h1>Create Account</h1>
+                        <p class="subtitle">Join MediNote-Ai and start your journey</p>
+                    </div>
+
+                    <form id="signUpForm" class="space-y-6">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <div class="input-container">
+                                <input
+                                    id="fullName"
+                                    type="text"
+                                    placeholder="Enter your full name"
+                                    required
+                                >
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signUpEmail">Email Address</label>
+                            <div class="input-container">
+                                <input
+                                    id="signUpEmail"
+                                    type="email"
+                                    placeholder="Enter your email"
+                                    required
+                                >
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="signUpPassword">Password</label>
+                            <div class="input-container">
+                                <input
+                                    id="signUpPassword"
+                                    type="password"
+                                    placeholder="Create a password"
+                                    required
+                                >
+                                
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password</label>
+                            <div class="input-container">
+                                <input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Confirm your password"
+                                    required
+                                >
+                               
+                            </div>
+                        </div>
+
+                        <div class="checkbox-container">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="#" class="link">Terms of Service</a>
+                                and <a href="#" class="link">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            Create Account
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <p class="text-center mt-6">
+                        Already have an account?
+                        <a href="#" class="link" onclick="showPage('signInPage')">Sign in</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Page -->
+    <div id="forgotPasswordPage" class="page">
+        <div class="min-h-screen bg-gradient">
+            <div class="container">
+                <div class="auth-card">
+                    <a href="#" class="back-link" onclick="showPage('signInPage')">
+                        <i data-lucide="arrow-left"></i>
+                        Back to Sign In
+                    </a>
+
+                    <div id="resetForm" class="reset-container">
+                        <div class="text-center mb-8">
+                            <h1>Reset Password</h1>
+                            <p class="subtitle">
+                                Enter your email address and we'll send you instructions to reset your password
+                            </p>
+                        </div>
+
+                        <form id="forgotPasswordForm" class="space-y-6">
+                            <div class="form-group">
+                                <label for="resetEmail">Email Address</label>
+                                <div class="input-container">
+                                    <input
+                                        id="resetEmail"
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        required
+                                    >
+                                  
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn-primary">
+                                Send Reset Instructions
+                                <i data-lucide="arrow-right"></i>
+                            </button>
+                        </form>
+                    </div>
+
+                    <div id="resetSuccess" class="reset-success hidden">
+                        <div class="icon-circle">
+                            <i data-lucide="mail"></i>
+                        </div>
+                        <h2>Check Your Email</h2>
+                        <p class="success-message">
+                            We've sent password reset instructions to:
+                            <br>
+                            <span id="resetEmailDisplay"></span>
+                        </p>
+                        <button onclick="resetForgotPassword()" class="btn-link">
+                            Try another email address
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Lucide icons
+        lucide.createIcons();
+    
+        // Form submissions
+        document.getElementById('signInForm').addEventListener('submit', handleSignIn);
+        document.getElementById('signUpForm').addEventListener('submit', handleSignUp);
+        document.getElementById('forgotPasswordForm').addEventListener('submit', handleForgotPassword);
+    
+        // Password validation
+        const signUpPassword = document.getElementById('signUpPassword');
+        const confirmPassword = document.getElementById('confirmPassword');
+        signUpPassword.addEventListener('input', validatePasswords);
+        confirmPassword.addEventListener('input', validatePasswords);
+    });
+    
+    // Page navigation
+    function showPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+    
+        // Show selected page
+        document.getElementById(pageId).classList.add('active');
+    
+        // Reset forms
+        document.querySelectorAll('form').forEach(form => form.reset());
+    
+        // Reset forgot password state
+        if (pageId === 'forgotPasswordPage') {
+            document.getElementById('resetForm').style.display = 'block';
+            document.getElementById('resetSuccess').style.display = 'none';
+        }
+    }
+    
+    // Form handlers
+    function handleSignIn(e) {
+        e.preventDefault();
+        const email = document.getElementById('signInEmail').value;
+        const password = document.getElementById('signInPassword').value;
+        
+        // Add your sign in logic here
+        console.log('Sign in:', { email, password });
+    }
+    
+    function handleSignUp(e) {
+        e.preventDefault();
+        const name = document.getElementById('fullName').value;
+        const email = document.getElementById('signUpEmail').value;
+        const password = document.getElementById('signUpPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const terms = document.getElementById('terms').checked;
+    
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+    
+        if (!terms) {
+            alert('Please accept the terms and conditions');
+            return;
+        }
+    
+        // Add your sign up logic here
+        console.log('Sign up:', { name, email, password });
+    }
+    
+    function handleForgotPassword(e) {
+        e.preventDefault();
+        const email = document.getElementById('resetEmail').value;
+    
+        // Show success state
+        document.getElementById('resetForm').style.display = 'none';
+        document.getElementById('resetSuccess').style.display = 'block';
+        document.getElementById('resetEmailDisplay').textContent = email;
+    
+        // Add your password reset logic here
+        console.log('Password reset:', { email });
+    }
+    
+    function resetForgotPassword() {
+        document.getElementById('resetForm').style.display = 'block';
+        document.getElementById('resetSuccess').style.display = 'none';
+        document.getElementById('forgotPasswordForm').reset();
+    }
+    
+    // Password validation
+    function validatePasswords() {
+        const password = document.getElementById('signUpPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPassword.setCustomValidity('Passwords do not match');
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+    </script>
+</body>
+</html>

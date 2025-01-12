@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MediNote-Ai</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        color: white;
+        min-height: 100vh;
+        background: linear-gradient(to bottom, #1e3a8a, #1e40af);
+      }
+
+      .container {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        padding: 2rem;
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      /* Left Side Styles */
+      .prescription-preview {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 1rem;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        height: calc(100vh - 4rem); /* Account for padding */
+      }
+
+      .image-container {
+        width: 100%;
+        /* Calculate height based on aspect ratio (2000/1414 ≈ 1.414) */
+        aspect-ratio: 1414/2000;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        max-height: calc(100vh - 12rem); /* Account for padding and buttons */
+      }
+
+      .image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Adding subtle shadow to help with visibility */
+        filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+      }
+
+      .button-group {
+        display: flex;
+        gap: 1rem;
+      }
+
+      /* Right Side Styles */
+      .forms-container {
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+      }
+
+      .form-card {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(8px);
+        border-radius: 1rem;
+        padding: 2rem;
+      }
+
+      .form-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 1.5rem;
+        color: white;
+      }
+
+      .form-group {
+        margin-bottom: 1rem;
+      }
+
+      .label-with-icon {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: #bfdbfe;
+        margin-bottom: 0.5rem;
+      }
+
+      .label-with-icon i {
+        width: 1rem;
+        height: 1rem;
+        color: #bfdbfe;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background: rgba(30, 58, 138, 0.5);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 0.5rem;
+        color: white;
+        font-size: 1rem;
+        transition: all 0.2s;
+      }
+
+      input::placeholder {
+        color: rgba(191, 219, 254, 0.5);
+      }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+      }
+
+      .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-size: 1rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #2563eb;
+        color: white;
+      }
+
+      .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+      }
+
+      .btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .medicine-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .medicine-entry {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .readonly {
+        background: rgba(30, 58, 138, 0.3);
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 1024px) {
+        .medicine-entry {
+          grid-template-columns: 1fr;
+        }
+        @media (max-width: 1024px) {
+          .container {
+            grid-template-columns: 1fr;
+            padding: 1rem;
+          }
+
+          .prescription-preview {
+            height: auto;
+            min-height: 60vh;
+          }
+
+          .image-container {
+            width: 100%;
+            max-height: 70vh;
+          }
+        }
+
+        @media print {
+          .container {
+            display: block;
+          }
+
+          .image-container {
+            width: 1414px;
+            height: 2000px;
+            page-break-inside: avoid;
+          }
+
+          .image-container img {
+            width: 100%;
+            height: 100%;
+          }
+
+          .forms-container {
+            display: none;
+          }
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Left Side - Prescription Preview -->
+      <div class="prescription-preview">
+        <div class="image-container">
+          <img
+            src="{{ url_for('static',filename='updated_prescription.png') }}"
+            alt="Prescription Preview"
+          />
+        </div>
+        <div class="button-group">
+          <a href="{{ url_for('print_prescription') }}">
+            <button class="btn btn-primary" onclick="printPrescription()">
+              <i data-lucide="printer"></i>
+              Print Prescription
+            </button></a
+          >
+          <a href="{{ url_for('render_next_page') }}">
+            <button class="btn btn-secondary" onclick="nextPrescription()">
+              <i data-lucide="arrow-right"></i>
+              Next
+            </button></a
+          >
+        </div>
+      </div>
+
+      <!-- Right Side - Forms -->
+      <div class="forms-container">
+        <!-- Patient Details Form -->
+        <div class="form-card">
+          <h2 class="form-title">Patient Details</h2>
+          <form id="patientForm" class="space-y-6">
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="calendar"></i>
+                Age
+              </label>
+              <input
+                type="number"
+                id="age"
+                name="age"
+                placeholder="Enter age"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="users"></i>
+                Gender
+              </label>
+              <select id="gender" name="gender" required>
+                <option value="">Select gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="droplet"></i>
+                Blood Group
+              </label>
+              <select id="bloodGroup" name="bloodGroup" required>
+                <option value="">Select blood group</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="scale"></i>
+                Weight (kg)
+              </label>
+              <input
+                type="number"
+                id="weight"
+                name="weight"
+                placeholder="Enter weight"
+                step="0.1"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="ruler"></i>
+                Height (cm)
+              </label>
+              <input
+                type="number"
+                id="height"
+                name="height"
+                placeholder="Enter height"
+                step="0.1"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="phone"></i>
+                Contact Number
+              </label>
+              <input
+                type="tel"
+                id="contact"
+                name="contact"
+                placeholder="Enter contact number"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="label-with-icon">
+                <i data-lucide="activity"></i>
+                BMI
+              </label>
+              <input
+                type="number"
+                id="bmi"
+                name="bmi"
+                placeholder="Calculated BMI"
+                readonly
+                class="readonly"
+              />
+            </div>
+          </form>
+        </div>
+
+        <!-- Medication Information Form -->
+        <div class="form-card">
+          <h2 class="form-title">Medication Information</h2>
+          <form id="medicationForm">
+            <div class="medicine-list" id="medicineList">
+              <div class="medicine-entry">
+                <div class="form-group">
+                  <label class="label-with-icon">
+                    <i data-lucide="pill"></i>
+                    Tablet Name
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter medicine name"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="label-with-icon">
+                    <i data-lucide="clock"></i>
+                    Timing
+                  </label>
+                  <select required>
+                    <option value="">Select timing</option>
+                    <option value="morning">Morning</option>
+                    <option value="afternoon">Afternoon</option>
+                    <option value="evening">Evening</option>
+                    <option value="night">Night</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="label-with-icon">
+                    <i data-lucide="utensils"></i>
+                    When
+                  </label>
+                  <select required>
+                    <option value="">Select when</option>
+                    <option value="before">Before Food</option>
+                    <option value="after">After Food</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="label-with-icon">
+                    <i data-lucide="repeat"></i>
+                    Frequency
+                  </label>
+                  <select required>
+                    <option value="">Select frequency</option>
+                    <option value="once">Once daily</option>
+                    <option value="twice">Twice daily</option>
+                    <option value="thrice">Thrice daily</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="addMedicine()"
+            >
+              <i data-lucide="plus"></i>
+              Add Another Medicine
+            </button>
+          </form>
+        </div>
+
+        <!-- Revisit Section -->
+        <div class="form-card">
+          <h2 class="form-title">Follow-up Visit</h2>
+          <div class="form-group">
+            <label class="label-with-icon">
+              <i data-lucide="calendar"></i>
+              Next Visit Date
+            </label>
+            <input type="date" id="revisitDate" name="revisitDate" required />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // BMI Calculation
+        const weightInput = document.getElementById("weight");
+        const heightInput = document.getElementById("height");
+        const bmiInput = document.getElementById("bmi");
+
+        function calculateBMI() {
+          const weight = parseFloat(weightInput.value);
+          const height = parseFloat(heightInput.value) / 100; // Convert cm to meters
+
+          if (weight && height) {
+            const bmi = (weight / (height * height)).toFixed(1);
+            bmiInput.value = bmi;
+          }
+        }
+
+        weightInput.addEventListener("input", calculateBMI);
+        heightInput.addEventListener("input", calculateBMI);
+      });
+
+      // Print function
+      function printPrescription() {
+        window.print();
+      }
+
+      // Next prescription function
+      function nextPrescription() {
+        // Add your logic for next prescription
+        console.log("Next prescription");
+      }
+
+      // Add medicine entry function
+      function addMedicine() {
+        const medicineList = document.getElementById("medicineList");
+        const newEntry = medicineList.children[0].cloneNode(true);
+
+        // Clear input values
+        newEntry.querySelectorAll("input, select").forEach((input) => {
+          input.value = "";
+        });
+
+        medicineList.appendChild(newEntry);
+        lucide.createIcons(); // Reinitialize icons for new entry
+      }
+    </script>
+  </body>
+</html>
