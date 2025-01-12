@@ -424,7 +424,7 @@ def generate_images(patient_details_file_path,care_management_file_path, diet_pl
 @app.route('/generate_report', methods=['POST'])
 def generate_images_endpoint():
     patient_id = "PAT574"
-    file_path = r'D:\MediNote-AI\static\patient_details\PAT574\2025-01-12\transcript.json'
+    file_path = r'/MediNote-AI/static/patient_details/PAT574/2025-01-12/transcript.json'
     try:
         with open(file_path, 'r') as file:
             data = json.load(file)
@@ -433,15 +433,12 @@ def generate_images_endpoint():
                 return jsonify({"error": "No transcripts found in the file"}), 400
             conversation = transcripts[0].get("transcript")
             patient_details_file_path = extract_patient_details(conversation)
-            print("done")
             diet_plan_file_path = extract_diet_plan(conversation)
-            print("done")
             prescription_file_path = extract_prescription_details(conversation)
-            print("done")
             care_management_file_path = extract_care_management(conversation)
-            print("done")
             process_patient_data(patient_details_file_path)
             img1_path , img2_path = generate_images(patient_details_file_path,care_management_file_path,diet_plan_file_path,prescription_file_path)
+            return render_template('prescription page 1.html')
 
     except (json.JSONDecodeError, FileNotFoundError) as e:
         return f"Error reading the file: {e}"
