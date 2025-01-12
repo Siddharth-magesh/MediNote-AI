@@ -82,7 +82,7 @@ MediNote AI is an innovative solution designed to streamline healthcare workflow
 
 ## Screenshots
 ### Login Page
-![Login Page]("D:\NITK\Sign_Up.png")
+![Login Page]("static/images/images/Sign_"Up.png)
 
 ### Patient Analysis
 ![Patient Analysis]("/images/analyse.png")
