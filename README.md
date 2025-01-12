@@ -122,6 +122,11 @@ MediNote-AI embodies **innovation and impact**, fitting into the **HackVerse Gra
 - **Leveraging Generative AI** for a real-world healthcare solution.  
 - **Improving efficiency** in a critical domain—healthcare.  
 - **Demonstrating technical depth** with real-time AI integration.  
+=======
+## Screenshots
+### Login Page
+![Login Page](./static/images/images/Sign_Up.png)
+
 
 ---
 
@@ -151,14 +156,14 @@ MediNote-AI utilizes **AI-driven automation** for real-world problem-solving, al
 
 ## 📷 Screenshots  
 **Login Page:**  
-![Login Page](/images/images/Sign_Up.png)  
+![Login Page](./static/images/images/Sign_Up.png)  
 
 **Patient Analysis:**  
-![Patient Analysis](/images/images/analyse.png)  
+![Patient Analysis](./static/images/images/analyse.png)  
 
 **Prescription Preview:**  
-![Prescription 1](/images/images/report1.png)  
-![Prescription 2](/images/images/repor2.png)  
+![Prescription 1](./static/images/images/report1.png)  
+![Prescription 2](./static/images/images/repor2.png)  
 
 ---
 
