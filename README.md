@@ -163,7 +163,7 @@ MediNote-AI utilizes **AI-driven automation** for real-world problem-solving, al
 
 **Prescription Preview:**  
 ![Prescription 1](./static/images/images/report1.png)  
-![Prescription 2](./static/images/images/repor2.png)  
+![Prescription 2](./static/images/images/report2.png)  
 
 ---
 
