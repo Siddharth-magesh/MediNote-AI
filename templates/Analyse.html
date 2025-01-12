@@ -655,11 +655,7 @@
           }
 
           setLoading(true);
-
-          // Simulated API call
           setTimeout(() => {
-            // Simulate patient not found for demonstration
-            // In real app, this would be an actual API check
             if (phoneNumber !== "1234567890") {
               showPatientNotFound(phoneNumber);
             } else {
@@ -688,11 +684,7 @@
           lucide.createIcons();
           enableControls();
         }
-
-        // Add the viewHistory function
         window.viewHistory = function () {
-          // Here you can add the logic to navigate to the history page
-          // For example:
           window.location.href = `/patient-history?phone=${phoneInput.value}`;
         };
 
@@ -770,7 +762,6 @@
           reportButton.disabled = true;
         }
 
-        // Add keyboard support
         phoneInput.addEventListener("keypress", (e) => {
           if (e.key === "Enter" && !isLoading) {
             lookupPatient();
