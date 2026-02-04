@@ -1,0 +1,8 @@
+# MediNote-AI Backup Crontab
+# Install: crontab /scripts/crontab
+
+# Database backup - Daily at 2:00 AM
+0 2 * * * /scripts/backup.sh >> /var/log/backup.log 2>&1
+
+# Database backup - Weekly full backup on Sunday at 3:00 AM
+0 3 * * 0 RETENTION_DAYS=90 /scripts/backup.sh >> /var/log/backup.log 2>&1

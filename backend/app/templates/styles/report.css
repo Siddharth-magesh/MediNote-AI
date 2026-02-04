@@ -1,0 +1,437 @@
+/* Report Styles - Print-optimized CSS for medical reports */
+
+/* Base styles */
+@page {
+    size: A4;
+    margin: 15mm;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+    font-size: 11pt;
+    line-height: 1.4;
+    color: #333;
+    background: #fff;
+}
+
+/* Header section */
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #2563eb;
+    margin-bottom: 20px;
+}
+
+.hospital-info {
+    flex: 1;
+}
+
+.hospital-info .hospital-name {
+    font-size: 18pt;
+    font-weight: 700;
+    color: #1e40af;
+    margin-bottom: 5px;
+}
+
+.hospital-info .hospital-address {
+    font-size: 9pt;
+    color: #666;
+}
+
+.hospital-logo {
+    max-width: 100px;
+    max-height: 60px;
+    margin-right: 15px;
+}
+
+.doctor-info {
+    text-align: right;
+    flex: 1;
+}
+
+.doctor-info .doctor-name {
+    font-size: 14pt;
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.doctor-info .doctor-details {
+    font-size: 9pt;
+    color: #666;
+}
+
+/* Patient section */
+.patient-section {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+}
+
+.patient-section h2 {
+    font-size: 12pt;
+    color: #1e40af;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.patient-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.patient-field {
+    font-size: 10pt;
+}
+
+.patient-field .label {
+    color: #666;
+    font-size: 8pt;
+    text-transform: uppercase;
+}
+
+.patient-field .value {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Section titles */
+.section-title {
+    font-size: 13pt;
+    font-weight: 600;
+    color: #1e40af;
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+    margin: 20px 0 15px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.section-title .rx-symbol {
+    font-size: 16pt;
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+/* Prescription table */
+.prescription-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.prescription-table th {
+    background: #f1f5f9;
+    padding: 10px 8px;
+    text-align: left;
+    font-size: 9pt;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.prescription-table td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 10pt;
+    vertical-align: top;
+}
+
+.prescription-table tr:last-child td {
+    border-bottom: none;
+}
+
+.medicine-name {
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.medicine-type {
+    font-size: 8pt;
+    color: #666;
+    font-style: italic;
+}
+
+.special-instructions {
+    font-size: 9pt;
+    color: #dc2626;
+    font-style: italic;
+}
+
+/* Injections section */
+.injections-section {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.injections-section h4 {
+    font-size: 10pt;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+/* Investigations */
+.investigations-list {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+}
+
+.investigations-list li {
+    padding: 5px 0 5px 20px;
+    position: relative;
+    font-size: 10pt;
+}
+
+.investigations-list li::before {
+    content: "•";
+    position: absolute;
+    left: 5px;
+    color: #2563eb;
+}
+
+/* Diet plan */
+.diet-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.meal-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+}
+
+.meal-card h4 {
+    font-size: 10pt;
+    font-weight: 600;
+    color: #1e40af;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.meal-card .timing {
+    font-size: 8pt;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.meal-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.meal-card li {
+    padding: 3px 0;
+    font-size: 10pt;
+    padding-left: 15px;
+    position: relative;
+}
+
+.meal-card li::before {
+    content: "○";
+    position: absolute;
+    left: 0;
+    color: #22c55e;
+}
+
+.diet-restrictions {
+    margin-top: 15px;
+    padding: 10px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 6px;
+}
+
+.diet-restrictions h4 {
+    font-size: 10pt;
+    color: #dc2626;
+    margin-bottom: 8px;
+}
+
+.diet-restrictions ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.diet-restrictions li {
+    background: #fee2e2;
+    padding: 3px 10px;
+    border-radius: 3px;
+    font-size: 9pt;
+}
+
+.hydration-advice {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #eff6ff;
+    border-left: 3px solid #3b82f6;
+    font-size: 10pt;
+}
+
+/* Care instructions */
+.care-section {
+    margin-bottom: 15px;
+}
+
+.care-list {
+    list-style: none;
+    padding: 0;
+}
+
+.care-list li {
+    padding: 6px 0 6px 25px;
+    position: relative;
+    font-size: 10pt;
+    border-bottom: 1px dotted #e2e8f0;
+}
+
+.care-list li:last-child {
+    border-bottom: none;
+}
+
+.care-list li::before {
+    content: "✓";
+    position: absolute;
+    left: 5px;
+    color: #22c55e;
+    font-weight: bold;
+}
+
+.warning-box {
+    margin-top: 15px;
+    padding: 12px;
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+}
+
+.warning-box h4 {
+    font-size: 10pt;
+    color: #b45309;
+    margin-bottom: 8px;
+}
+
+.warning-box ul {
+    list-style: none;
+    padding: 0;
+}
+
+.warning-box li {
+    padding: 4px 0 4px 20px;
+    position: relative;
+    font-size: 10pt;
+}
+
+.warning-box li::before {
+    content: "⚠";
+    position: absolute;
+    left: 0;
+}
+
+/* Footer */
+.report-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 30px;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.follow-up-info {
+    flex: 1;
+}
+
+.follow-up-info .label {
+    font-size: 9pt;
+    color: #666;
+}
+
+.follow-up-info .value {
+    font-size: 12pt;
+    font-weight: 600;
+    color: #1e40af;
+}
+
+.qr-code {
+    text-align: center;
+}
+
+.qr-code img {
+    width: 80px;
+    height: 80px;
+}
+
+.qr-code .qr-label {
+    font-size: 7pt;
+    color: #666;
+    margin-top: 3px;
+}
+
+.signature-section {
+    text-align: right;
+    flex: 1;
+}
+
+.signature-line {
+    border-top: 1px solid #333;
+    width: 150px;
+    margin-left: auto;
+    padding-top: 5px;
+}
+
+.signature-section .doctor-name {
+    font-weight: 600;
+    font-size: 11pt;
+}
+
+.signature-section .date {
+    font-size: 9pt;
+    color: #666;
+}
+
+/* Print styles */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .page-break {
+        page-break-before: always;
+    }
+}
+
+/* Compact styles for prescription-only reports */
+.compact .patient-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.compact .diet-grid {
+    grid-template-columns: repeat(2, 1fr);
+}

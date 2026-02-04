@@ -1,0 +1,164 @@
+# MediNote-AI Alert Rules
+
+groups:
+  - name: medinote_alerts
+    interval: 30s
+    rules:
+      # ==========================================================================
+      # Backend API Alerts
+      # ==========================================================================
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Backend API is down"
+          description: "MediNote backend API has been down for more than 1 minute."
+
+      - alert: HighAPILatency
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket{job="backend"}[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High API latency detected"
+          description: "95th percentile API latency is above 2 seconds for 5 minutes."
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{job="backend", status=~"5.."}[5m]) / rate(http_requests_total{job="backend"}[5m]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+          description: "More than 5% of requests are failing with 5xx errors."
+
+      - alert: AuthFailureSpike
+        expr: rate(auth_failures_total[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Spike in authentication failures"
+          description: "High rate of authentication failures detected. Possible brute force attack."
+
+      # ==========================================================================
+      # Database Alerts
+      # ==========================================================================
+      - alert: PostgresDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "PostgreSQL is down"
+          description: "PostgreSQL database has been unreachable for more than 1 minute."
+
+      - alert: PostgresHighConnections
+        expr: pg_stat_activity_count / pg_settings_max_connections > 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL connection pool nearly exhausted"
+          description: "More than 80% of database connections are in use."
+
+      - alert: PostgresSlowQueries
+        expr: rate(pg_stat_activity_max_tx_duration{datname="medinote"}[5m]) > 60
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow PostgreSQL queries detected"
+          description: "Long-running transactions detected in the database."
+
+      - alert: PostgresDeadlocks
+        expr: rate(pg_stat_database_deadlocks{datname="medinote"}[5m]) > 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "PostgreSQL deadlocks detected"
+          description: "Database deadlocks are occurring."
+
+      # ==========================================================================
+      # Redis Alerts
+      # ==========================================================================
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Redis is down"
+          description: "Redis cache has been unreachable for more than 1 minute."
+
+      - alert: RedisHighMemory
+        expr: redis_memory_used_bytes / redis_memory_max_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Redis memory usage high"
+          description: "Redis is using more than 90% of available memory."
+
+      # ==========================================================================
+      # Infrastructure Alerts
+      # ==========================================================================
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High CPU usage"
+          description: "CPU usage is above 80% for 10 minutes."
+
+      - alert: HighMemoryUsage
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High memory usage"
+          description: "Memory usage is above 90% for 5 minutes."
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Disk space critically low"
+          description: "Less than 10% disk space remaining."
+
+      # ==========================================================================
+      # Application-Specific Alerts
+      # ==========================================================================
+      - alert: RecordingSessionsHigh
+        expr: active_recording_sessions > 100
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High number of active recording sessions"
+          description: "More than 100 concurrent recording sessions active."
+
+      - alert: ExtractionQueueBacklog
+        expr: extraction_queue_length > 50
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "AI extraction queue backlog"
+          description: "More than 50 extractions waiting in queue for 10 minutes."
+
+      - alert: StorageQuotaWarning
+        expr: storage_used_bytes / storage_quota_bytes > 0.8
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          summary: "Storage quota approaching limit"
+          description: "Storage usage is above 80% of quota."

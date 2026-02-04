@@ -1,0 +1,86 @@
+# MediNote-AI Pull Request Checks
+name: PR Check
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  # Quick lint check for fast feedback
+  lint:
+    name: Lint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Python linters
+        run: pip install ruff black
+
+      - name: Run Python lint
+        run: |
+          cd backend
+          ruff check app/ --output-format=github
+          black --check app/
+
+      - name: Install Node dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Run Frontend lint
+        run: |
+          cd frontend
+          npm run lint
+
+  # Check for security vulnerabilities
+  security:
+    name: Security Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: "fs"
+          scan-ref: "."
+          severity: "CRITICAL,HIGH"
+          exit-code: "1"
+
+  # Check commit messages
+  commitlint:
+    name: Commit Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install commitlint
+        run: |
+          npm install -g @commitlint/cli @commitlint/config-conventional
+
+      - name: Validate commit messages
+        run: |
+          npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
