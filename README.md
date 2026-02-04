@@ -1,223 +1,207 @@
-# MediNote-AI  
-**Transforming Doctor-Patient Conversations into Automated Medical Reports with AI Precision.**
+# MediNote-AI
+
+**AI-Powered Healthcare Documentation Platform**
+
+Transform doctor-patient conversations into structured medical reports with AI precision.
 
 ---
 
-## 🚀 Overview
-**MediNote-AI** is an AI-powered web application designed to streamline healthcare documentation by converting doctor-patient conversations into structured, comprehensive medical reports. By leveraging advanced speech-to-text technology and natural language processing (NLP) with models like **GPT-4**, MediNote-AI assists healthcare professionals in generating accurate prescriptions, dietary recommendations, and care instructions while storing data securely for future reference.  
+## Overview
 
-This project was developed during **HackVerse 5.0** to empower doctors and medical institutions with a **smarter, faster, and error-free** approach to patient management.
-
----
-
-## 🌟 Key Features & USPs (Unique Selling Propositions)
-
-### 🩺 **Automated Medical Report Generation**
-- Real-time conversion of doctor-patient conversations into detailed medical reports.  
-- AI extracts patient information, symptoms, medications, and care instructions.  
-
-### 📄 **Comprehensive Medical Reports**
-- Patient details and contact information.  
-- Prescription summaries with dosage instructions.  
-- Dietary plans and wellness recommendations.  
-- Health metrics (BMI calculations, diabetes risk, etc.).  
-
-### 🧠 **Intelligent Data Management**
-- Patient history stored in a **structured JSON database** for easy access.  
-- Automatic retrieval of previous health records for continuity of care.  
-
-### 🎙️ **Speech-to-Text Integration**
-- Real-time speech recognition for seamless conversation analysis.  
-- Multi-language support (English, Tamil, Hindi) for diverse patient bases.  
-
-### 📊 **User-Friendly Interface**
-- Clean, intuitive UI designed for doctors with minimal technical knowledge.  
-- Mobile-responsive design for accessibility from multiple devices.  
-
-### 🔐 **Security & Compliance**
-- **Data privacy** with secure data handling and storage.  
-- Compliance with healthcare standards for patient data security.  
+MediNote-AI is a modern healthcare documentation platform that:
+- Records doctor-patient consultations
+- Transcribes conversations in real-time (multi-language support)
+- Extracts structured medical data using AI
+- Generates professional prescription reports
 
 ---
 
-## 🛠️ Technologies Used
+## Quick Links
 
-### **Frontend:**
-- **HTML, CSS, JavaScript** – Clean, responsive design.  
-- **Lucide Icons** for enhanced visual representation.  
+### Documentation
+- [Architecture Overview](./docs/architecture/overview.md)
+- [Technology Stack](./docs/architecture/tech-stack.md)
+- [Features Overview](./docs/features/overview.md)
+- [API Documentation](./docs/api/overview.md)
+- [Deployment Guide](./docs/deployment/overview.md)
 
-### **Backend:**
-- **Python (Flask)** – Lightweight backend for data processing.  
-- **MongoDB & JSON Storage** – For secure and efficient patient data storage.  
-- **Threading in Python** – For concurrent recording and report generation.  
+### Development
+- [Frontend Architecture](./docs/frontend/architecture.md)
+- [Backend Architecture](./docs/backend/architecture.md)
+- [Database Schema](./docs/database/schema.md)
+- [Security Guidelines](./docs/security/overview.md)
 
-### **AI & Speech Recognition:**
-- **OpenAI's GPT-4** – For advanced natural language processing.  
-- **SpeechRecognition Library** – For converting audio to text.  
-
----
-
-## 🎯 How It Works (Workflow)
-
-### **1. Speech Capture and Conversion:**
-- Doctor initiates the recording using the **MediNote-AI** web app.  
-- Real-time audio capture is converted into text using **SpeechRecognition**.  
-
-### **2. Data Extraction:**
-- AI extracts critical data like symptoms, prescribed medications, and care instructions.  
-
-### **3. Report Generation:**
-- The system generates a **PDF report** containing:  
-   - Patient details.  
-   - Prescriptions with dosage.  
-   - Dietary plans and care instructions.  
-
-### **4. Data Storage & Management:**
-- Patient data is stored securely in a **JSON database**.  
-- Patient records can be accessed anytime using **phone number lookup**.  
+### Task Tracking
+- [Master Task List](./tasks/master-task-list.md)
+- [Frontend Tracking](./tasks/frontend-tracking.md)
+- [Backend Tracking](./tasks/backend-tracking.md)
+- [Testing Tracking](./tasks/testing-tracking.md)
+- [Deployment Tracking](./tasks/deployment-tracking.md)
 
 ---
 
-## 💡 Problem It Solves
-Healthcare professionals often face:  
-- **Manual data entry challenges** leading to errors and inefficiency.  
-- **Time-consuming documentation** processes during consultations.  
-- **Inconsistent record-keeping**, affecting long-term patient care.  
+## Technology Stack
 
-**MediNote-AI solves these issues by:**  
-- Automating **prescription generation** and patient record management.  
-- Reducing **administrative workload** for doctors.  
-- Providing **faster access** to patient history for better care decisions.  
+### Frontend
+- Next.js 14 (React)
+- TypeScript
+- Tailwind CSS + shadcn/ui
+- Zustand + TanStack Query
 
----
+### Backend
+- Python 3.11+
+- FastAPI
+- SQLAlchemy 2.0 (async)
+- PostgreSQL + Redis
 
-## 🎯 Use Cases  
-**MediNote-AI** can be used in:  
-- **Hospitals & Clinics** for real-time documentation during consultations.  
-- **Telemedicine Platforms** for remote patient monitoring and reporting.  
-- **Health Camps** for faster data collection and reporting.  
-- **Medical Education** as a tool for teaching efficient patient documentation.  
-
----
-
-## 🚧 Challenges We Faced  
-While building MediNote-AI during **HackVerse 5.0**, we encountered several technical challenges:  
-
-- **Session Management Issues:**  
-   - Difficulty maintaining patient sessions across multiple servers.  
-   - Resolved using **cross-server API communication** and improved session handling.  
-
-- **Version Control Conflicts:**  
-   - Running multiple servers simultaneously caused API conflicts.  
-   - Fixed using **cross-origin resource sharing (CORS)** for better synchronization.  
-
-- **Paid API Access:**  
-   - Initial reliance on **premium AI models** increased complexity.  
-   - Balanced by **combining open-source tools** with premium APIs only for critical tasks.  
+### AI/ML
+- Groq (Llama-3.3-70B)
+- Google Cloud Speech-to-Text
+- Google Cloud Translate
 
 ---
 
-## 🎯 HackVerse 5.0 Grand Prize Track Fit  
-MediNote-AI embodies **innovation and impact**, fitting into the **HackVerse Grand Prize Track** by:  
-- **Leveraging Generative AI** for a real-world healthcare solution.  
-- **Improving efficiency** in a critical domain—healthcare.  
-- **Demonstrating technical depth** with real-time AI integration.  
-=======
-## Screenshots
-### Login Page
-![Login Page](./static/images/images/Sign_Up.png)
+## Project Structure
 
-
----
-
-## 🎯 The Vital Vault: Healthcare Track Fit  
-MediNote-AI directly addresses the **Vital Vault Healthcare Track** by:  
-- **Automating medical documentation**, reducing errors.  
-- **Enhancing patient care** through personalized care instructions.  
-- **Providing secure data handling** to protect sensitive medical information.  
-
----
-
-## 🎯 Product Design Track Fit  
-MediNote-AI fits the **Product Design Track** by:  
-- **User-Centric Design:** Intuitive UI for both doctors and staff.  
-- **Functional Simplicity:** Minimal steps for recording and report generation.  
-- **Visual Clarity:** Clean report layouts for easy readability.  
+```
+MediNote-AI/
+├── docs/
+│   ├── architecture/      # System architecture docs
+│   ├── features/          # Feature specifications
+│   ├── frontend/          # Frontend documentation
+│   ├── backend/           # Backend documentation
+│   ├── database/          # Database schema & migrations
+│   ├── api/               # API documentation
+│   ├── deployment/        # Deployment guides
+│   ├── security/          # Security documentation
+│   ├── testing/           # Testing guidelines
+│   └── integrations/      # Third-party integrations
+├── tasks/
+│   ├── master-task-list.md
+│   ├── frontend-tracking.md
+│   ├── backend-tracking.md
+│   ├── testing-tracking.md
+│   └── deployment-tracking.md
+└── README.md
+```
 
 ---
 
-## 🎯 Plotch.ai Track Fit  
-MediNote-AI utilizes **AI-driven automation** for real-world problem-solving, aligning with the **Plotch.ai** track through:  
-- **AI-Generated Insights:** Extracting critical data from conversations.  
-- **Real-Time Processing:** Instant data analysis and reporting.  
-- **Scalability:** Designed to support multiple patients and clinics.  
+## Development Phases
+
+| Phase | Description | Status |
+|-------|-------------|--------|
+| 1 | Project Setup & Infrastructure | Not Started |
+| 2 | Backend Foundation | Not Started |
+| 3 | Patient Management API | Not Started |
+| 4 | Recording & Transcription | Not Started |
+| 5 | AI Extraction Service | Not Started |
+| 6 | Report Generation | Not Started |
+| 7 | Frontend Foundation | Not Started |
+| 8 | Frontend Pages | Not Started |
+| 9 | Recording UI | Not Started |
+| 10 | Testing & QA | Not Started |
+| 11 | Deployment | Not Started |
 
 ---
 
-## 📷 Screenshots  
-**Login Page:**  
-![Login Page](./static/images/images/Sign_Up.png)  
+## Getting Started
 
-**Patient Analysis:**  
-![Patient Analysis](./static/images/images/analyse.png)  
+### Prerequisites
+- Python 3.11+
+- Node.js 20+
+- Docker & Docker Compose
+- PostgreSQL 15+ (or via Docker)
+- Redis 7+ (or via Docker)
 
-**Prescription Preview:**  
-![Prescription 1](./static/images/images/report1.png)  
-![Prescription 2](./static/images/images/report2.png)  
+### Development Setup
 
----
-
-## 🧑‍💻 Developers  
-- **Siddharth Magesh** – AI Engineer & Backend Developer  
-- **Pranesh Kumar** – Full-Stack Developer  
-- **Mohamed Yasir** – UI/UX Designer  
-
----
-
-## 📦 Installation & Usage  
 ```bash
 # Clone the repository
-git clone https://github.com/your-repo/MediNote-AI.git  
+git clone https://github.com/your-org/medinote-ai.git
+cd medinote-ai
 
-# Navigate into the directory
-cd MediNote-AI  
+# Start infrastructure
+docker compose up -d postgres redis minio
 
-# Install dependencies
-pip install -r requirements.txt 
-pip install -r input_requirements.txt 
+# Backend setup
+cd backend
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+alembic upgrade head
+uvicorn app.main:app --reload
 
-# Run the server
-python app.py  
-
-# Run Second server
-python input.py
+# Frontend setup (new terminal)
+cd frontend
+npm install
+npm run dev
 ```
-**Access the web app at:** `http://localhost:5000`  
+
+### Environment Variables
+See `.env.example` for required environment variables.
 
 ---
 
-## 📈 Future Enhancements  
-- **EHR Integration:** Compatibility with electronic health records for broader usage.  
-- **Multi-Language Support:** More language options for diverse patient groups.  
-- **Mobile App Development:** Expanding to a mobile-friendly version for on-the-go usage.  
+## Key Features
+
+### Voice Recording
+- Real-time audio capture
+- Multi-language support (English, Hindi, Tamil)
+- Live transcription display
+- Noise suppression
+
+### AI Data Extraction
+- Patient information extraction
+- Prescription details parsing
+- Diet plan generation
+- Care instructions extraction
+
+### Report Generation
+- Professional PDF reports
+- Customizable templates
+- QR code verification
+- Digital signatures
+
+### Patient Management
+- Patient registration
+- Medical history tracking
+- Visit management
+- Search functionality
 
 ---
 
-## 🤝 Contribution  
-We welcome contributions! Feel free to submit issues or pull requests on our [GitHub Repo](https://github.com/your-repo/MediNote-AI).  
+## API Overview
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/auth/login` | POST | User authentication |
+| `/patients` | GET/POST | Patient management |
+| `/recording/start` | POST | Start recording |
+| `/reports/generate` | POST | Generate report |
+
+Full API documentation: [API Overview](./docs/api/overview.md)
 
 ---
 
-## 📜 License  
-This project is licensed under the **MIT License**. See the `LICENSE` file for details.  
+## Contributing
+
+1. Check the task tracking files for available tasks
+2. Reference the appropriate documentation
+3. Follow the coding guidelines
+4. Write tests for new features
+5. Update documentation as needed
 
 ---
 
-## 📧 Contact Us  
-For inquiries, please contact:  
-- 📩 **Email:** support@medinoteai.com  
-- 🌐 **Website:** [www.medinoteai.com](https://www.medinoteai.com)  
+## License
 
----  
+MIT License - See LICENSE file for details.
 
-**Empowering Smarter Healthcare with AI – MediNote-AI**  
+---
+
+## Contact
+
+- **Project Lead:** [Name]
+- **Documentation:** [docs@medinote.ai]
+- **Support:** [support@medinote.ai]

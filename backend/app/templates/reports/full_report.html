@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Report - {{ patient.name }}</title>
+    <style>
+        {% include 'styles/report.css' %}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="report-header">
+        <div class="hospital-info">
+            {% if hospital %}
+            {% if hospital.logo_url %}
+            <img src="{{ hospital.logo_url }}" alt="Logo" class="hospital-logo">
+            {% endif %}
+            <div class="hospital-name">{{ hospital.name }}</div>
+            <div class="hospital-address">
+                {% if hospital.address %}{{ hospital.address }}<br>{% endif %}
+                {% if hospital.phone %}Tel: {{ hospital.phone }}{% endif %}
+                {% if hospital.email %} | {{ hospital.email }}{% endif %}
+            </div>
+            {% else %}
+            <div class="hospital-name">MediNote Healthcare</div>
+            {% endif %}
+        </div>
+        <div class="doctor-info">
+            <div class="doctor-name">{{ doctor.name }}</div>
+            <div class="doctor-details">
+                {% if doctor.qualification %}{{ doctor.qualification }}<br>{% endif %}
+                {% if doctor.registration_no %}Reg. No: {{ doctor.registration_no }}<br>{% endif %}
+                {% if doctor.department %}{{ doctor.department }}{% endif %}
+            </div>
+        </div>
+    </header>
+
+    <!-- Patient Information -->
+    <section class="patient-section">
+        <h2>Patient Information</h2>
+        <div class="patient-grid">
+            <div class="patient-field">
+                <div class="label">Patient ID</div>
+                <div class="value">{{ patient.id }}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Name</div>
+                <div class="value">{{ patient.name }}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Age / Gender</div>
+                <div class="value">{{ patient.age or '-' }} yrs / {{ patient.gender or '-' }}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Blood Group</div>
+                <div class="value">{{ patient.blood_group or '-' }}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Contact</div>
+                <div class="value">{{ patient.phone or '-' }}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Weight</div>
+                <div class="value">{% if patient.weight_kg %}{{ patient.weight_kg }} kg{% else %}-{% endif %}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">Height</div>
+                <div class="value">{% if patient.height_cm %}{{ patient.height_cm }} cm{% else %}-{% endif %}</div>
+            </div>
+            <div class="patient-field">
+                <div class="label">BMI</div>
+                <div class="value">{% if patient.bmi %}{{ "%.1f"|format(patient.bmi) }}{% else %}-{% endif %}</div>
+            </div>
+        </div>
+        {% if patient.allergies %}
+        <div class="patient-field" style="margin-top: 10px;">
+            <div class="label">Known Allergies</div>
+            <div class="value" style="color: #dc2626;">{{ patient.allergies | join(', ') }}</div>
+        </div>
+        {% endif %}
+    </section>
+
+    <!-- Chief Complaint & Diagnosis -->
+    {% if chief_complaint or diagnosis %}
+    <section>
+        {% if chief_complaint %}
+        <div style="margin-bottom: 10px;">
+            <strong>Chief Complaint:</strong> {{ chief_complaint }}
+        </div>
+        {% endif %}
+        {% if diagnosis %}
+        <div>
+            <strong>Diagnosis:</strong> {{ diagnosis }}
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Prescription -->
+    {% if include_prescription and prescription %}
+    <section>
+        <h3 class="section-title"><span class="rx-symbol">℞</span> Prescription</h3>
+
+        {% if prescription.medications %}
+        <table class="prescription-table">
+            <thead>
+                <tr>
+                    <th style="width: 5%;">#</th>
+                    <th style="width: 25%;">Medicine</th>
+                    <th style="width: 12%;">Dosage</th>
+                    <th style="width: 15%;">Frequency</th>
+                    <th style="width: 12%;">Timing</th>
+                    <th style="width: 10%;">Duration</th>
+                    <th style="width: 21%;">Instructions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for med in prescription.medications %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>
+                        <span class="medicine-name">{{ med.name }}</span>
+                        {% if med.type %}<br><span class="medicine-type">({{ med.type }})</span>{% endif %}
+                    </td>
+                    <td>{{ med.dosage or '-' }}</td>
+                    <td>{{ med.frequency or '-' }}</td>
+                    <td>
+                        {{ med.timing or '-' }}
+                        {% if med.relation_to_food %}<br><small>{{ med.relation_to_food }} food</small>{% endif %}
+                    </td>
+                    <td>{% if med.duration_days %}{{ med.duration_days }} days{% else %}-{% endif %}</td>
+                    <td>
+                        {% if med.special_instructions %}
+                        <span class="special-instructions">{{ med.special_instructions }}</span>
+                        {% else %}-{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+        {% if prescription.injections %}
+        <div class="injections-section">
+            <h4>Injections</h4>
+            <ul class="investigations-list">
+                {% for inj in prescription.injections %}
+                <li>
+                    <strong>{{ inj.name }}</strong>
+                    {% if inj.dosage %} - {{ inj.dosage }}{% endif %}
+                    {% if inj.frequency %}, {{ inj.frequency }}{% endif %}
+                    {% if inj.route %} ({{ inj.route }}){% endif %}
+                    {% if inj.duration %} for {{ inj.duration }}{% endif %}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if prescription.investigations %}
+        <div style="margin-top: 15px;">
+            <h4 style="font-size: 10pt; color: #666; margin-bottom: 8px;">Investigations / Tests</h4>
+            <ul class="investigations-list">
+                {% for test in prescription.investigations %}
+                <li>{{ test }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Diet Plan -->
+    {% if include_diet and diet_plan %}
+    <section>
+        <h3 class="section-title">Diet Plan</h3>
+
+        <div class="diet-grid">
+            {% if diet_plan.breakfast %}
+            <div class="meal-card">
+                <h4>Breakfast</h4>
+                {% if diet_plan.breakfast.timing %}<div class="timing">{{ diet_plan.breakfast.timing }}</div>{% endif %}
+                <ul>
+                    {% for item in diet_plan.breakfast.items %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% if diet_plan.breakfast.portion_guidance %}
+                <small style="color: #666;">{{ diet_plan.breakfast.portion_guidance }}</small>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if diet_plan.lunch %}
+            <div class="meal-card">
+                <h4>Lunch</h4>
+                {% if diet_plan.lunch.timing %}<div class="timing">{{ diet_plan.lunch.timing }}</div>{% endif %}
+                <ul>
+                    {% for item in diet_plan.lunch.items %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% if diet_plan.lunch.portion_guidance %}
+                <small style="color: #666;">{{ diet_plan.lunch.portion_guidance }}</small>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            {% if diet_plan.dinner %}
+            <div class="meal-card">
+                <h4>Dinner</h4>
+                {% if diet_plan.dinner.timing %}<div class="timing">{{ diet_plan.dinner.timing }}</div>{% endif %}
+                <ul>
+                    {% for item in diet_plan.dinner.items %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+                {% if diet_plan.dinner.portion_guidance %}
+                <small style="color: #666;">{{ diet_plan.dinner.portion_guidance }}</small>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% if diet_plan.snacks %}
+        <div class="meal-card" style="margin-top: 10px;">
+            <h4>Snacks</h4>
+            {% if diet_plan.snacks.timing %}<div class="timing">{{ diet_plan.snacks.timing }}</div>{% endif %}
+            <ul style="display: flex; flex-wrap: wrap; gap: 10px;">
+                {% for item in diet_plan.snacks.items %}
+                <li style="padding-left: 0;">{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if diet_plan.foods_to_avoid %}
+        <div class="diet-restrictions">
+            <h4>Foods to Avoid</h4>
+            <ul>
+                {% for food in diet_plan.foods_to_avoid %}
+                <li>{{ food }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if diet_plan.hydration_advice %}
+        <div class="hydration-advice">
+            <strong>Hydration:</strong> {{ diet_plan.hydration_advice }}
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Care Instructions -->
+    {% if include_care and care_instructions %}
+    <section>
+        <h3 class="section-title">Care Instructions</h3>
+
+        {% if care_instructions.lifestyle_recommendations %}
+        <div class="care-section">
+            <h4 style="font-size: 10pt; color: #666; margin-bottom: 8px;">Lifestyle Recommendations</h4>
+            <ul class="care-list">
+                {% for rec in care_instructions.lifestyle_recommendations %}
+                <li>{{ rec }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if care_instructions.exercise_plan %}
+        <div class="care-section">
+            <h4 style="font-size: 10pt; color: #666; margin-bottom: 8px;">Exercise Plan</h4>
+            <ul class="care-list">
+                {% if care_instructions.exercise_plan.type %}
+                <li><strong>Type:</strong> {{ care_instructions.exercise_plan.type | join(', ') }}</li>
+                {% endif %}
+                {% if care_instructions.exercise_plan.frequency %}
+                <li><strong>Frequency:</strong> {{ care_instructions.exercise_plan.frequency }}</li>
+                {% endif %}
+                {% if care_instructions.exercise_plan.duration %}
+                <li><strong>Duration:</strong> {{ care_instructions.exercise_plan.duration }}</li>
+                {% endif %}
+            </ul>
+            {% if care_instructions.exercise_plan.precautions %}
+            <div style="margin-top: 5px; padding-left: 20px; font-size: 9pt; color: #b45309;">
+                <strong>Precautions:</strong> {{ care_instructions.exercise_plan.precautions | join(', ') }}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if care_instructions.sleep_recommendations %}
+        <div class="care-section">
+            <h4 style="font-size: 10pt; color: #666; margin-bottom: 8px;">Sleep</h4>
+            <p style="padding-left: 20px;">{{ care_instructions.sleep_recommendations }}</p>
+        </div>
+        {% endif %}
+
+        {% if care_instructions.warning_signs or care_instructions.when_to_seek_help %}
+        <div class="warning-box">
+            <h4>Warning Signs - Seek Immediate Help If:</h4>
+            <ul>
+                {% for sign in care_instructions.warning_signs or [] %}
+                <li>{{ sign }}</li>
+                {% endfor %}
+                {% for item in care_instructions.when_to_seek_help or [] %}
+                <li>{{ item }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        {% if care_instructions.additional_notes %}
+        <div style="margin-top: 15px; padding: 10px; background: #f8fafc; border-radius: 6px;">
+            <strong>Additional Notes:</strong> {{ care_instructions.additional_notes }}
+        </div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <!-- Footer -->
+    <footer class="report-footer">
+        <div class="follow-up-info">
+            {% if prescription and prescription.follow_up_date %}
+            <div class="label">Follow-up Date</div>
+            <div class="value">{{ prescription.follow_up_date }}</div>
+            {% if prescription.follow_up_notes %}
+            <div style="font-size: 9pt; color: #666; margin-top: 3px;">{{ prescription.follow_up_notes }}</div>
+            {% endif %}
+            {% endif %}
+        </div>
+
+        {% if qr_code_base64 %}
+        <div class="qr-code">
+            <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="Verification QR Code">
+            <div class="qr-label">Scan to verify</div>
+        </div>
+        {% endif %}
+
+        <div class="signature-section">
+            <div class="signature-line">
+                <div class="doctor-name">{{ doctor.name }}</div>
+                <div class="date">Date: {{ visit_date }}</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Report metadata -->
+    <div style="margin-top: 20px; text-align: center; font-size: 8pt; color: #999;">
+        Report ID: {{ report_number }} | Generated on {{ visit_date }}
+    </div>
+</body>
+</html>
