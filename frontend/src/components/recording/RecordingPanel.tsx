@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RecordButton } from "./RecordButton";
@@ -83,9 +83,9 @@ export function RecordingPanel({
   }, [status]);
 
   // Update connection status when recording status changes
-  useState(() => {
+  useEffect(() => {
     updateConnectionStatus();
-  });
+  }, [updateConnectionStatus]);
 
   const handleStart = useCallback(() => {
     setEditedTranscript("");

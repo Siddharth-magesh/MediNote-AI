@@ -196,8 +196,9 @@ export default function RecordingPage() {
 
   // Fetch preselected patient
   const { data: preselectedPatient } = usePatient(preselectedPatientId || "");
-  const { data: searchResults, isLoading: searchLoading } =
+  const { data: searchData, isLoading: searchLoading } =
     usePatientSearch(debouncedSearch);
+  const searchResults = searchData?.results;
 
   // Set preselected patient
   useEffect(() => {
